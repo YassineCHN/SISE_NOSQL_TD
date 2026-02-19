@@ -1,0 +1,47 @@
+version: "3.10"
+
+services:
+  redis:
+    image: redis
+    container_name: some-redis 
+    # volumes : 
+    #   - ./notebooks/:/notebooks 
+    #   - ./data/:/data
+    # ports:
+    #   - 6379:6379
+
+  mongodb:
+    image: mongo:4
+    container_name: some-mongo
+    # volumes : 
+    #   - ./notebooks/:/notebooks 
+    #   - ./data/:/data
+    # ports:
+    #   - 27017:27017
+
+  orientdb:
+    image: orientdb:2.2
+    container_name: some-orientdb
+    environment:
+      ORIENTDB_ROOT_PASSWORD: root
+    # volumes : 
+    #   - ./notebooks/:/notebooks
+    #   - ./data/:/data
+    # ports:
+    #   - 2424:2424
+    #   - 2480:2480
+
+  jupyter:
+    build: .  
+    container_name: python-nosql
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./data:/home/jovyan/data
+    ports:
+      - 8888:8888
+      - 4040:4040
+    depends_on:
+      - redis
+      - mongodb
+      - orientdb
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
