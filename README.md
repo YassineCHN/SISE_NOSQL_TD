@@ -25,6 +25,26 @@ Jupyter sera accessible sur [http://localhost:8888](http://localhost:8888) (sans
 
 Les notebooks se trouvent dans le dossier `notebooks/`, les données dans `data/`.
 
+## Docker
+
+### `Dockerfile`
+
+Le Dockerfile construit l'image du service Jupyter. Il part de l'image officielle `jupyter/minimal-notebook:python-3.10` et y ajoute :
+
+- **`mongodb-database-tools`** (installé en root via `apt`) — fournit notamment `mongoimport`, utilisé dans le notebook MongoDB pour charger les datasets MovieLens
+- **`redis`, `pymongo`, `pyorient`** (installés via `pip`) — les drivers Python pour interagir avec chacune des trois bases
+
+### `docker-compose.yaml`
+
+Le fichier orchestre quatre services qui communiquent sur un réseau Docker interne :
+
+- **`redis`** — image officielle Redis, accessible depuis Jupyter via le hostname `redis`
+- **`mongodb`** — image officielle `mongo:4`, accessible via le hostname `mongodb`
+- **`orientdb`** — image officielle `orientdb:2.2`, avec le mot de passe root défini via la variable d'environnement `ORIENTDB_ROOT_PASSWORD`
+- **`jupyter`** — le service construit depuis le Dockerfile, avec deux volumes montés (`./notebooks` et `./data`), les ports `8888` et `4040` exposés, et une dépendance explicite sur les trois services de base de données
+
+Les ports des bases de données ne sont intentionnellement **pas exposés** sur la machine hôte : les notebooks se connectent directement aux services par leur nom de service Docker (`redis`, `mongodb`, `orientdb`).
+
 ## Contenu des notebooks
 
 ### `1-redis.ipynb` — Redis
