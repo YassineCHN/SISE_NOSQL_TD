@@ -1,49 +1,71 @@
-# Lyon 2 NoSQL Tutorial
+# NoSQL Tutorials — Redis, MongoDB & OrientDB
 
-Contains instructions to install and use `redis`, `mongo` and `OrientDB`, and uses `Jupyter notebook` to interact with the databases in Python or shell.
+Travaux pratiques de NoSQL réalisés dans le cadre de mon cursus à l'Université Lyon 2.  
+Les notebooks couvrent trois bases de données NoSQL : **Redis**, **MongoDB** et **OrientDB**, avec des interactions en Python via Jupyter.
 
-## Prerequisites
+## Stack technique
 
-- Anaconda
-- Docker Desktop (make sure to reinstall Docker Desktop so the `docker` command line works)
+| Composant | Rôle |
+|-----------|------|
+| `Redis` | Base clé-valeur |
+| `MongoDB 4` | Base documentaire |
+| `OrientDB 2.2` | Base orientée graphe |
+| `Jupyter Notebook` | Interface Python interactive |
+| `Docker / Docker Compose` | Orchestration de l'ensemble |
 
-### Setup the conda environment
+## Lancement
 
-Remember to use the `Anaconda Powershell` prompt at the root of your project.
+Cloner le repo puis lancer l'environnement complet avec une seule commande :
 
-```
-conda create -n nosql python=3.7
-conda activate nosql
-conda install -c anaconda mongo-tools
-pip install jupyter jupyterlab redis pymongo
-```
-
-To run your jupyter notebook: `jupyter notebook` or `jupyter lab`
-
-### Run Redis
-
-In a separate command line prompt:
-
-```
-docker run -it --rm --name some-redis -p 6379:6379 redis
+```bash
+docker compose up --build
 ```
 
-### Run MongoDB
+Jupyter sera accessible sur [http://localhost:8888](http://localhost:8888) (sans mot de passe).
 
-In a separate command line prompt:
+Les notebooks se trouvent dans le dossier `notebooks/`, les données dans `data/`.
+
+## Contenu des notebooks
+
+### `1-redis.ipynb` — Redis
+
+- Manipulation de **strings**, listes, sets, sorted sets et dictionnaires
+- Cas pratique : **modélisation d'un cache de requêtes HTTP** (stockage, vérification, suppression de requêtes GET/PUT)
+
+### `2-mongo.ipynb` — MongoDB
+
+- Import de données MovieLens (`users` et `movies`) via `mongoimport`
+- Requêtes de filtrage, projection, tri et pagination
+- Recherche textuelle avec index `$text`
+- Requêtes sur tableaux imbriqués avec `$elemMatch`
+- Mise à jour de documents (`update_one`, `update_many`)
+- Cas pratique : **modélisation d'un blog** (posts, tags, commentaires imbriqués)
+
+### `3-orientdb.ipynb` — OrientDB
+
+- Création de vertex et d'edges dans une base graphe
+- Modélisation de relations entre divinités grecques (fratrie, parenté)
+- Navigation dans le graphe avec `out()`, `in()`, `EXPAND()`
+- Cas pratique : **système de recommandation produits** — *"Quels produits ont été achetés par des personnes ayant acheté X ?"*
+
+## Structure du projet
 
 ```
-docker run -it --rm --name some-mongo -p 27017:27017 mongo:4
+.
+├── docker-compose.yaml
+├── Dockerfile
+├───lecture
+│       nosql_lecture.pdf
+├── notebooks/
+│   ├── 1-redis.ipynb
+│   ├── 2-mongo.ipynb
+│   └── 3-orientdb.ipynb
+└── data/
+    ├── movielens_movies.json
+    └── movielens_users.json
 ```
 
-### Run OrientDB
+## Crédits
 
-In a separate command line prompt:
-
-```
-docker run -it --rm --name some-orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=root orientdb:2.2
-```
-
-## Contributions
-
-A huge thanks to Damien SIMONIN FEUGAS for a huge part of those NoSQL tutorials which were translated into Jupyter notebooks !
+Exercices originaux (sans les réponses) fournis par mon enseignant.
+Dockerisation et adaptation personnelle ajoutées par moi.
